@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <fileSystem>
+#include <filesystem>
 #include <stack>
 class node{
     private:
@@ -29,9 +29,7 @@ class node{
         for (auto const &printChild : prettyPrintChild)
             std::cout << printChild;
     }
-
 };
-
 class PathToGraph{
     private:
     std::string startAddressTraversal;
@@ -49,20 +47,24 @@ class PathToGraph{
         stackOfFolders.push(this->startAddressTraversal);
         std::vector <node> returnNodes{};
         //okay so directory iterator allows you to iterate 1 layer at a time
-        //prefect we can now find the no extension (folder) add them to a queue or stack to traverse them individually
-        while(!stackOfFolders.empty()){
+        //no extension (folder) add them to a queue BFS or stack DFS to traverse them individually
+        try{
+            while(!stackOfFolders.empty()){
             std::string currentDir = stackOfFolders.top();
             stackOfFolders.pop();
             for(auto const &file: std::filesystem::directory_iterator(currentDir)){
-                std::cout << file.path() << " file type: " << file.path().extension() << std::flush;
-                if file.path()
-
+                std::cout << file.path() << "\n" << std::flush;
+                if (file.path().extension().empty()){
+                    stackOfFolders.push(file.path().string());
+                }
             }
         }
-        
+        }catch(const std::exception &err){
+            std::cerr << err.what() << "\n" << std::flush;
+        }
+               
         return returnNodes;
     }
-    
 };
 
 int main (){
